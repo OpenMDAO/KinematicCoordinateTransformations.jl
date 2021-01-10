@@ -262,4 +262,47 @@ Test.@testset "Steady X rotation transformation" begin
         Test.@test j_new ≈ [0.0, -3*ω^2*v[2], -ω^3*r]
     end
 
+    Test.@testset "Comparison to accelerating hand-calculations" begin
+        t0 = 0.0
+        ω = 2*pi
+        θ = 0.0
+        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+
+        x = [0.0, 2.0, 0.0]
+        v = [0.0, 3.0, 0.0]
+        a = [0.0, 4.0, 0.0]
+        j = [0.0, 0.0, 0.0]
+
+        t = 0.0
+        x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
+
+        # Angle between the source and target frames is zero, so x_new should be
+        # the same as x.
+        Test.@test x_new ≈ x
+
+        # The point is moving in the source reference frame, so the
+        # velocity in the target frame will be what it is in the rotating frame,
+        # then add the velocity due to the rotation, which will
+        # be ω*r pointed in the tangential direction.
+        r = sqrt(sum(x[2:end].^2))
+        Test.@test v_new ≈ v .+ [0.0, 0.0, ω*r]
+
+        # The acceleration will include ω^2*r centrifigal acceleration, and the Coriolis acceleration.
+        Test.@test a_new ≈ a .+ [0.0, -ω^2*r, 2*ω*v[2]]
+
+        # And what will the jerk be? Well, the derivative of acceleration. The
+        # acceleration can be expressed as `a = -ω^2*r*rhat`, where `rhat` is
+        # the unit vector pointing in the radial direction. So the derivative
+        # of that would be `j = -ω^2*r*drhat_dt`, which would be `j =
+        # -ω^2*r*(ω*thetahat) = -ω^3*r*thetahat`, where `thetahat` is the unit
+        # vector in the tangential direction (same direction as the rotation of
+        # the frame), right? And then have to do something similar for the
+        # Coreolis acceleration. And something for the acceleration in the
+        # rotating frame. In the rotating frame, the acceleration is pointed
+        # radially outward. But it's constant, right? Yeah, but when I take the
+        # derivative of it I have to cross it with the rotation vector, which
+        # means it will be pointing in the tangential direction. OK.
+        Test.@test j_new ≈ [0.0, -3*ω^2*v[2], -ω^3*r + 3*ω*a[2]]
+    end
+
 end
