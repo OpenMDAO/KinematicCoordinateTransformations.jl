@@ -1,11 +1,11 @@
-struct ConstantVelocityTransformation{T,B} <: KinematicTransformation
+@concrete struct ConstantVelocityTransformation <: KinematicTransformation
     # Time at which the position of the source coordinate system's origin in the target coordinate system is equal to x0.
-    t0::T
+    t0
     # Position of the source coordinate system's in the target coordinate system's frame of reference at time t0.
-    x0::B
+    x0
     # (Constant) velocity of the source coordinate system relative to the
     # target coordinate system.
-    v::B
+    v
 end
 
 function (trans::ConstantVelocityTransformation{T,B})(t, x, v, a, j) where {T,B}
@@ -22,7 +22,7 @@ function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where 
     # x_new = x + trans.v*(t - t0)
     # v_new = v + trans.v
 
-    dx = trans.x0 + trans.v*(t - t0)
+    dx = trans.x0 + trans.v*(t - trans.t0)
     dv = trans.v
     
     zvector = StaticArrays.@SVector [zero(T), zero(T), zero(T)]
@@ -62,5 +62,5 @@ function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where 
     j_Mj = imatrix
     j_b = zvector
 
-    return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_v, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
+    return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
 end

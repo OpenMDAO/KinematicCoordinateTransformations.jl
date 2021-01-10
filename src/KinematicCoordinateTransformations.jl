@@ -1,5 +1,6 @@
 module KinematicCoordinateTransformations
 
+using ConcreteStructs: @concrete
 import StaticArrays
 
 abstract type KinematicTransformation end

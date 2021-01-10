@@ -1,7 +1,7 @@
 # This is completely stolen from CoordinateTransformations.jl. Every vector will
 # be transformed the same way, I guess, so I only need one matrix.
-struct ConstantLinearMap{M} <: KinematicTransformation
-    linear::M
+@concrete struct ConstantLinearMap <: KinematicTransformation
+    linear
 end
 
 function (trans::ConstantLinearMap)(t, x, v, a, j)
@@ -46,5 +46,5 @@ function ConstantAffineMap(t, trans::ConstantLinearMap{M}) where {M}
     j_Mj = trans.linear
     j_b = zvector
 
-    return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_v, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
+    return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
 end

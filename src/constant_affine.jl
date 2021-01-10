@@ -1,25 +1,25 @@
-struct ConstantAffineMap{M, B} <: KinematicTransformation
+@concrete struct ConstantAffineMap <: KinematicTransformation
     # x_new = x_Mx*x + x_b
-    x_Mx::M
-    x_b::B
+    x_Mx
+    x_b
 
     # v_new = v_Mx*x + v_Mv*v + v_b
-    v_Mx::M
-    v_Mv::M
-    v_b::B
+    v_Mx
+    v_Mv
+    v_b
 
     # a_new = a_Mx*x + a_Mv*v + a_Ma*a + a_b
-    a_Mx::M
-    a_Mv::M
-    a_Ma::M
-    a_b::B
+    a_Mx
+    a_Mv
+    a_Ma
+    a_b
 
     # j_new = j_Mx*x + j_Mv*v + j_Ma*a + j_Mj*j + j_b
-    j_Mx::M
-    j_Mv::M
-    j_Ma::M
-    j_Mj::M
-    j_b::B
+    j_Mx
+    j_Mv
+    j_Ma
+    j_Mj
+    j_b
 end
 
 function (trans::ConstantAffineMap)(t, x, v, a, j)

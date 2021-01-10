@@ -1,9 +1,9 @@
-struct SteadyRotXTransformation{T} <: KinematicTransformation
+@concrete struct SteadyRotXTransformation <: KinematicTransformation
     # Time at which the angle between the target and source coordinate systems'
     # y axis (and z axis) is θ.
-    t0::T
-    ω::T
-    θ::T
+    t0
+    ω
+    θ
 end
 
 function (trans::SteadyRotXTransformation{T})(t, x, v, a, j) where {T}
