@@ -11,7 +11,9 @@ Test.@testset "Composed" begin
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
 
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
 
         Test.@test x3 ≈ x12
@@ -22,7 +24,9 @@ Test.@testset "Composed" begin
         t = 5.0
         t3 = KinematicCoordinateTransformations.compose(t, trans2, trans1)
 
+        Test.@inferred trans2(t, trans1(t, x, v, a, j)...)
         x21, v21, a21, j21 = trans2(t, trans1(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
 
         Test.@test x3 ≈ x21
@@ -48,8 +52,10 @@ Test.@testset "Composed" begin
         v = [3.0, 4.0, 5.0]
         a = [4.0, 5.0, 6.0]
         j = [5.0, 6.0, 7.0]
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
 
+        Test.@inferred trans3(t, x, v, a, j)
         x3, v3, a3, j3 = trans3(t, x, v, a, j)
         Test.@test x3 ≈ x12
         Test.@test v3 ≈ v12
@@ -59,7 +65,9 @@ Test.@testset "Composed" begin
         t = 3.0
         trans3 = KinematicCoordinateTransformations.compose(t, trans2, trans1)
         
+        Test.@inferred trans2(t, trans1(t, x, v, a, j)...)
         x21, v21, a21, j21 = trans2(t, trans1(t, x, v, a, j)...)
+        Test.@inferred trans3(t, x, v, a, j)
         x3, v3, a3, j3 = trans3(t, x, v, a, j)
 
         Test.@test x3 ≈ x21
@@ -87,7 +95,9 @@ Test.@testset "Composed" begin
         a = [2.0, 3.0, 4.0]
         j = [3.0, 4.0, -2.0]
 
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
+        Test.@inferred trans3(t, x, v, a, j)
         x3, v3, a3, j3 = trans3(t, x, v, a, j)
 
         Test.@test x3 ≈ x12
@@ -123,7 +133,9 @@ Test.@testset "Composed" begin
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
 
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
         Test.@test x3 ≈ x12
         Test.@test v3 ≈ v12
@@ -161,7 +173,9 @@ Test.@testset "Composed" begin
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
 
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
         Test.@test x3 ≈ x12
         Test.@test v3 ≈ v12
@@ -171,7 +185,9 @@ Test.@testset "Composed" begin
         t = 5.0
         t3 = KinematicCoordinateTransformations.compose(t, trans2, trans1)
 
+        Test.@inferred trans2(t, trans1(t, x, v, a, j)...)
         x21, v21, a21, j21 = trans2(t, trans1(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
         Test.@test x3 ≈ x21
         Test.@test v3 ≈ v21
@@ -199,7 +215,9 @@ Test.@testset "Composed" begin
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
 
+        Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         x12, v12, a12, j12 = trans1(t, trans2(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
         Test.@test x3 ≈ x12
         Test.@test v3 ≈ v12
@@ -209,7 +227,9 @@ Test.@testset "Composed" begin
         t = 5.0
         t3 = KinematicCoordinateTransformations.compose(t, trans2, trans1)
 
+        Test.@inferred trans2(t, trans1(t, x, v, a, j)...)
         x21, v21, a21, j21 = trans2(t, trans1(t, x, v, a, j)...)
+        Test.@inferred t3(t, x, v, a, j)
         x3, v3, a3, j3 = t3(t, x, v, a, j)
         Test.@test x3 ≈ x21
         Test.@test v3 ≈ v21

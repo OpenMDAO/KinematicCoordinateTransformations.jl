@@ -10,6 +10,7 @@ Test.@testset "Constant velocity transformation" begin
         v = [8.0, 2.0, 2.0]
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x
         Test.@test v_new ≈ v
@@ -27,6 +28,7 @@ Test.@testset "Constant velocity transformation" begin
         v = [8.0, 2.0, 2.0]
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x + (t - t0)*vel
         Test.@test v_new ≈ v + vel
@@ -44,6 +46,7 @@ Test.@testset "Constant velocity transformation" begin
         v = [8.0, 2.0, 2.0]
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x + x0 + (t - t0)*vel
         Test.@test v_new ≈ v + vel

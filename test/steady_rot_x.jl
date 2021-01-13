@@ -10,6 +10,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x
         Test.@test v_new ≈ v
@@ -28,6 +29,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # These are the Cartesian unit vectors of the rotating (source) frame
@@ -61,6 +63,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # These are the Cartesian unit vectors of the rotating (source) frame
@@ -94,6 +97,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # These are the Cartesian unit vectors of the rotating (source) frame
@@ -128,6 +132,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # These are the Cartesian unit vectors of the rotating (source) frame
@@ -162,6 +167,7 @@ Test.@testset "Steady X rotation transformation" begin
         a = [2.0, 3.0, 4.0]
         j = [3.0, 4.0, -2.0]
         trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # These are the Cartesian unit vectors of the rotating (source) frame
@@ -198,6 +204,7 @@ Test.@testset "Steady X rotation transformation" begin
         j = [0.0, 0.0, 0.0]
 
         t = 0.0
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # Angle between the source and target frames is zero, so x_new should be
@@ -235,6 +242,7 @@ Test.@testset "Steady X rotation transformation" begin
         j = [0.0, 0.0, 0.0]
 
         t = 0.0
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # Angle between the source and target frames is zero, so x_new should be
@@ -274,6 +282,7 @@ Test.@testset "Steady X rotation transformation" begin
         j = [0.0, 0.0, 0.0]
 
         t = 0.0
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         # Angle between the source and target frames is zero, so x_new should be

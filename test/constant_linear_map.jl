@@ -12,6 +12,7 @@ Test.@testset "Constant linear map" begin
         a = [4.0, 5.0, 6.0]
         j = [5.0, 6.0, 7.0]
 
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         Test.@test x_new ≈ [0.0, 0.0, 0.0]
@@ -32,6 +33,7 @@ Test.@testset "Constant linear map" begin
         a = [4.0, 5.0, 6.0]
         j = [5.0, 6.0, 7.0]
 
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         Test.@test x_new ≈ x
@@ -52,6 +54,7 @@ Test.@testset "Constant linear map" begin
         a = [4.0, 5.0, 6.0]
         j = [5.0, 6.0, 7.0]
 
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         Test.@test x_new ≈ [x[3], x[1], x[2]]
@@ -72,6 +75,7 @@ Test.@testset "Constant linear map" begin
         a = [4.0, 5.0, 6.0]
         j = [5.0, 6.0, 7.0]
 
+        Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
         Test.@test x_new ≈ M*x
