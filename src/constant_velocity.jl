@@ -8,11 +8,22 @@
     v
 end
 
-function (trans::ConstantVelocityTransformation{T,B})(t, x, v, a, j) where {T,B}
-    x_new = x + trans.x0 + (t - trans.t0)*trans.v
-    v_new = v + trans.v
-    a_new = a
-    j_new = j
+function (trans::ConstantVelocityTransformation)(t, x, v, a, j)
+    x_new = similar(x)
+    v_new = similar(v)
+    a_new = similar(a)
+    j_new = similar(j)
+
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j)
+
+    return x_new, v_new, a_new, j_new
+end
+
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t, x, v, a, j)
+    x_new .= x .+ trans.x0 .+ (t - trans.t0)*trans.v
+    v_new .= v .+ trans.v
+    a_new .= a
+    j_new .= j
     return x_new, v_new, a_new, j_new
 end
 

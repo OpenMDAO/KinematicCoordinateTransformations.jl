@@ -4,7 +4,7 @@ Test.@testset "Constant velocity transformation" begin
         t0 = 0.0
         x0 = StaticArrays.SVector(0.0, 0.0, 0.0)
         vel = StaticArrays.SVector(0.0, 0.0, 0.0)
-        trans = KinematicCoordinateTransformations.ConstantVelocityTransformation(t0, x0, vel)
+        trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
         x = [3.0, 4.0, 5.0]
         v = [8.0, 2.0, 2.0]
@@ -22,7 +22,7 @@ Test.@testset "Constant velocity transformation" begin
         t0 = -2.0
         x0 = StaticArrays.SVector(0.0, 0.0, 0.0)
         vel = StaticArrays.SVector(2.0, 3.0, 4.0)
-        trans = KinematicCoordinateTransformations.ConstantVelocityTransformation(t0, x0, vel)
+        trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
         x = [3.0, 4.0, 5.0]
         v = [8.0, 2.0, 2.0]
@@ -40,7 +40,7 @@ Test.@testset "Constant velocity transformation" begin
         t0 = -2.0
         x0 = StaticArrays.SVector(1.0, 2.0, 3.0)
         vel = StaticArrays.SVector(2.0, 3.0, 4.0)
-        trans = KinematicCoordinateTransformations.ConstantVelocityTransformation(t0, x0, vel)
+        trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
         x = [3.0, 4.0, 5.0]
         v = [8.0, 2.0, 2.0]

@@ -6,14 +6,28 @@
     θ
 end
 
-function (trans::SteadyRotXTransformation{T})(t, x, v, a, j) where {T}
+function (trans::SteadyRotXTransformation)(t, x, v, a, j)
+    x_new = similar(x)
+    v_new = similar(v)
+    a_new = similar(a)
+    j_new = similar(j)
+
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j)
+
+    return x_new, v_new, a_new, j_new
+end
+
+function transform!(x_new, v_new, a_new, j_new, trans::SteadyRotXTransformation, t, x, v, a, j)
     # x_new = R*x
     # v_new = v + Ωx*x
     # a_new = a + 2*Ωx*v + ΩxΩx*x
     # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
 
     affine = ConstantAffineMap(t, trans)
-    return affine(t, x, v, a, j)
+
+    transform!(x_new, v_new, a_new, j_new, affine, t, x, v, a, j)
+
+    return nothing
 end
 
 function ConstantAffineMap(t, trans::SteadyRotXTransformation{T}) where {T}

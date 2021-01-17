@@ -5,12 +5,28 @@
 end
 
 function (trans::ConstantLinearMap)(t, x, v, a, j)
-    x_new = trans.linear*x
-    v_new = trans.linear*v
-    a_new = trans.linear*a
-    j_new = trans.linear*j
+    x_new = similar(x)
+    v_new = similar(v)
+    a_new = similar(a)
+    j_new = similar(j)
+
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j)
 
     return x_new, v_new, a_new, j_new
+end
+
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, v, a, j)
+    # x_new = trans.linear*x
+    # v_new = trans.linear*v
+    # a_new = trans.linear*a
+    # j_new = trans.linear*j
+
+    mul!(x_new, trans.linear, x)
+    mul!(v_new, trans.linear, v)
+    mul!(a_new, trans.linear, a)
+    mul!(j_new, trans.linear, j)
+
+    return nothing
 end
 
 function ConstantAffineMap(t, trans::ConstantLinearMap{M}) where {M}

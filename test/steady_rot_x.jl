@@ -9,7 +9,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [8.0, 2.0, 2.0]
         a = [2.0, 3.0, 4.0]
         j = [1.0, 2.0, 3.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x
@@ -28,7 +28,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [0.0, 0.0, 0.0]
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
@@ -62,7 +62,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [0.0, 0.0, 0.0]
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
@@ -96,7 +96,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [1.0, 2.0, 3.0]
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
@@ -131,7 +131,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [1.0, 2.0, 3.0]
         a = [0.0, 0.0, 0.0]
         j = [0.0, 0.0, 0.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
@@ -166,7 +166,7 @@ Test.@testset "Steady X rotation transformation" begin
         v = [1.5, 2.0, 3.0]
         a = [2.0, 3.0, 4.0]
         j = [3.0, 4.0, -2.0]
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
 
@@ -196,7 +196,7 @@ Test.@testset "Steady X rotation transformation" begin
         t0 = 0.0
         ω = 2*pi
         θ = 0.0
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
 
         x = [0.0, 2.0, 0.0]
         v = [0.0, 0.0, 0.0]
@@ -234,7 +234,7 @@ Test.@testset "Steady X rotation transformation" begin
         t0 = 0.0
         ω = 2*pi
         θ = 0.0
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
 
         x = [0.0, 2.0, 0.0]
         v = [0.0, 3.0, 0.0]
@@ -274,7 +274,7 @@ Test.@testset "Steady X rotation transformation" begin
         t0 = 0.0
         ω = 2*pi
         θ = 0.0
-        trans = KinematicCoordinateTransformations.SteadyRotXTransformation(t0, ω, θ)
+        trans = SteadyRotXTransformation(t0, ω, θ)
 
         x = [0.0, 2.0, 0.0]
         v = [0.0, 3.0, 0.0]
