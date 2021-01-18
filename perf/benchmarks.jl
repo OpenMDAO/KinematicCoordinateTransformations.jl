@@ -1,4 +1,13 @@
-Test.@testset "Profiling" begin
+using BenchmarkTools
+using KinematicCoordinateTransformations
+
+import Random
+import StaticArrays
+
+const paramsfile = joinpath(@__DIR__, "params.json")
+const resultsfile = joinpath(@__DIR__, "results.json")
+
+function run_benchmarks(; load_params=true)
 
     function get_test_input(N)
         T = Float64
@@ -63,42 +72,58 @@ Test.@testset "Profiling" begin
     s24["allocating"] = @benchmarkable $trans321($t, $X, $V, $A, $J)
     s24["mutating"] = @benchmarkable transform!($X_new, $V_new, $A_new, $J_new, $trans321, $t, $X, $V, $A, $J)
 
-    tune!(suite, verbose=false)
+    if load_params && isfile(paramsfile)
+        # Load the benchmark parameters.
+        # https://github.com/JuliaCI/BenchmarkTools.jl/blob/master/doc/manual.md#caching-parameters
+        println("Loading cached parameters from $paramsfile...")
+        loadparams!(suite, BenchmarkTools.load(paramsfile)[1])
+
+        # Also need to warmup the benchmarks to get rid of the JIT overhead
+        # (when not using tune!):
+        # https://discourse.julialang.org/t/benchmarktools-theory-and-practice/5728
+        warmup(suite, verbose=false)
+    else
+        tune!(suite, verbose=false)
+    end
+
     results = run(suite, verbose=false)
 
-    # Let's do some comparisons. What do I want to compare? The time and memory
-    # allocations, I guess. First thing to check is that the composed
-    # transformation is faster than the sequential.
-    println("Composed vs sequential comparison: SteadyRotXTransformation, ConstantLinearMap, ConstantVelocityTransformation")
-    r1 = results["composed vs sequential"]
-    m_seq = median(r1["sequential"])
-    m_com = median(r1["composed"])
-    j = judge(m_com, m_seq)
-    display(j)
-    Test.@test isimprovement(j)
+    return suite, results
+end
 
-    println("Mutating vs allocating comparison, SteadyRotXTransformation:")
-    r21 = results["mutating vs allocating"]["SteadyRotXTransformation"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
-    j = judge(m_mut, m_all)
-    display(j)
-    Test.@test isimprovement(j)
+function save_benchmarks()
+    suite, results = run_benchmarks(load_params=false)
 
-    println("Mutating vs allocating comparison, ConstantLinearMap:")
-    r22 = results["mutating vs allocating"]["ConstantLinearMap"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
-    j = judge(m_mut, m_all)
-    display(j)
-    Test.@test isimprovement(j)
+    # Save the benchmark parameters:
+    # https://github.com/JuliaCI/BenchmarkTools.jl/blob/master/doc/manual.md#caching-parameters
+    BenchmarkTools.save(paramsfile, params(suite))
 
-    println("Mutating vs allocating comparison, ConstantVelocityTransformation:")
-    r22 = results["mutating vs allocating"]["ConstantVelocityTransformation"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
-    j = judge(m_mut, m_all)
-    display(j)
-    Test.@test isimprovement(j)
+    # I also want to save the results.
+    BenchmarkTools.save(resultsfile, results)
+end
 
+function check_regressions()
+    suite, results = run_benchmarks()
+
+    # Now, let's compare the current results to the saved ones.
+    oldresults = BenchmarkTools.load(resultsfile)[1]
+    regression_results = Bool[]
+    for (keys, trial) in leaves(results)
+        oldtrial = oldresults[keys]
+        mnew = median(trial)
+        mold = median(oldtrial)
+        j = judge(mnew, mold)
+        println(keys)
+        display(j)
+        push!(regression_results, isregression(j))
+    end
+
+    return regression_results
+end
+
+if !isinteractive()
+    regs = check_regressions()
+    if any(regs)
+        exit(1)
+    end
 end
