@@ -17,6 +17,13 @@ function get_test_input(N)
     return X, V, A, J
 end
 
+function sequential_no_splatting(trans1, trans2, trans3, t, X0, V0, A0, J0)
+    X1, V1, A1, J1 = trans1(t, X0, V0, A0, J0)
+    X2, V2, A2, J2 = trans2(t, X1, V1, A1, J1)
+    X3, V3, A3, J3 = trans3(t, X2, V2, A2, J2)
+    return X3, V3, A3, J3
+end
+
 function run_benchmarks(; N=100, load_params=true)
 
     # Seed the random number generator to get consistent input.
@@ -51,6 +58,7 @@ function run_benchmarks(; N=100, load_params=true)
 
     s1 = suite["composed vs sequential"] = BenchmarkGroup()
     s1["sequential"] = @benchmarkable $trans3($t, $trans2($t, $trans1($t, $X, $V, $A, $J)...)...)
+    s1["sequential_no_splatting"] = @benchmarkable sequential_no_splatting($trans1, $trans2, $trans3, $t, $X, $V, $A, $J)
     s1["composed"] = @benchmarkable $trans321($t, $X, $V, $A, $J)
 
     s2 = suite["mutating vs allocating"] = BenchmarkGroup()
@@ -107,30 +115,42 @@ function compare_methods()
     # allocations, I guess. First thing to check is that the composed
     # transformation is faster than the sequential.
     println("Composed vs sequential comparison: SteadyRotXTransformation, ConstantLinearMap, ConstantVelocityTransformation")
-    r1 = results["composed vs sequential"]
-    m_seq = median(r1["sequential"])
-    m_com = median(r1["composed"])
+    r = results["composed vs sequential"]
+    m_seq = median(r["sequential"])
+    m_com = median(r["composed"])
     j = judge(m_com, m_seq)
     display(j)
 
+    println("Sequential w/o splatting vs sequential comparison: SteadyRotXTransformation, ConstantLinearMap, ConstantVelocityTransformation")
+    m_seq_no_splat = median(r["sequential_no_splatting"])
+    j = judge(m_seq_no_splat, m_seq)
+    display(j)
+
     println("Mutating vs allocating comparison, SteadyRotXTransformation:")
-    r21 = results["mutating vs allocating"]["SteadyRotXTransformation"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
+    r = results["mutating vs allocating"]["SteadyRotXTransformation"]
+    m_mut = median(r["mutating"])
+    m_all = median(r["allocating"])
     j = judge(m_mut, m_all)
     display(j)
 
     println("Mutating vs allocating comparison, ConstantLinearMap:")
-    r22 = results["mutating vs allocating"]["ConstantLinearMap"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
+    r = results["mutating vs allocating"]["ConstantLinearMap"]
+    m_mut = median(r["mutating"])
+    m_all = median(r["allocating"])
     j = judge(m_mut, m_all)
     display(j)
 
     println("Mutating vs allocating comparison, ConstantVelocityTransformation:")
-    r22 = results["mutating vs allocating"]["ConstantVelocityTransformation"]
-    m_mut = median(r21["mutating"])
-    m_all = median(r21["allocating"])
+    r = results["mutating vs allocating"]["ConstantVelocityTransformation"]
+    m_mut = median(r["mutating"])
+    m_all = median(r["allocating"])
+    j = judge(m_mut, m_all)
+    display(j)
+
+    println("Mutating vs allocating comparison, composed transformation:")
+    r = results["mutating vs allocating"]["composed"]
+    m_mut = median(r["mutating"])
+    m_all = median(r["allocating"])
     j = judge(m_mut, m_all)
     display(j)
 end
