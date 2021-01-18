@@ -7,17 +7,17 @@ import StaticArrays
 const paramsfile = joinpath(@__DIR__, "params.json")
 const resultsfile = joinpath(@__DIR__, "results.json")
 
-function run_benchmarks(; load_params=true)
+function get_test_input(N)
+    T = Float64
+    X = rand(T, (3, N))
+    V = rand(T, (3, N))
+    A = rand(T, (3, N))
+    J = rand(T, (3, N))
 
-    function get_test_input(N)
-        T = Float64
-        X = rand(T, (3, N))
-        V = rand(T, (3, N))
-        A = rand(T, (3, N))
-        J = rand(T, (3, N))
+    return X, V, A, J
+end
 
-        return X, V, A, J
-    end
+function run_benchmarks(; N=100, load_params=true)
 
     # Seed the random number generator to get consistent input.
     Random.seed!(1)
@@ -40,7 +40,6 @@ function run_benchmarks(; load_params=true)
     t = 3.0
     trans321 = compose(t, trans3, compose(t, trans2, trans1))
 
-    N = 100
     X, V, A, J = get_test_input(N)
 
     X_new = similar(X)
@@ -75,7 +74,6 @@ function run_benchmarks(; load_params=true)
     if load_params && isfile(paramsfile)
         # Load the benchmark parameters.
         # https://github.com/JuliaCI/BenchmarkTools.jl/blob/master/doc/manual.md#caching-parameters
-        println("Loading cached parameters from $paramsfile...")
         loadparams!(suite, BenchmarkTools.load(paramsfile)[1])
 
         # Also need to warmup the benchmarks to get rid of the JIT overhead
@@ -102,6 +100,41 @@ function save_benchmarks()
     BenchmarkTools.save(resultsfile, results)
 end
 
+function compare_methods()
+    suite, results = run_benchmarks()
+
+    # Let's do some comparisons. What do I want to compare? The time and memory
+    # allocations, I guess. First thing to check is that the composed
+    # transformation is faster than the sequential.
+    println("Composed vs sequential comparison: SteadyRotXTransformation, ConstantLinearMap, ConstantVelocityTransformation")
+    r1 = results["composed vs sequential"]
+    m_seq = median(r1["sequential"])
+    m_com = median(r1["composed"])
+    j = judge(m_com, m_seq)
+    display(j)
+
+    println("Mutating vs allocating comparison, SteadyRotXTransformation:")
+    r21 = results["mutating vs allocating"]["SteadyRotXTransformation"]
+    m_mut = median(r21["mutating"])
+    m_all = median(r21["allocating"])
+    j = judge(m_mut, m_all)
+    display(j)
+
+    println("Mutating vs allocating comparison, ConstantLinearMap:")
+    r22 = results["mutating vs allocating"]["ConstantLinearMap"]
+    m_mut = median(r21["mutating"])
+    m_all = median(r21["allocating"])
+    j = judge(m_mut, m_all)
+    display(j)
+
+    println("Mutating vs allocating comparison, ConstantVelocityTransformation:")
+    r22 = results["mutating vs allocating"]["ConstantVelocityTransformation"]
+    m_mut = median(r21["mutating"])
+    m_all = median(r21["allocating"])
+    j = judge(m_mut, m_all)
+    display(j)
+end
+
 function check_regressions()
     suite, results = run_benchmarks()
 
@@ -121,7 +154,7 @@ function check_regressions()
     return regression_results
 end
 
-if !isinteractive()
+if ! isinteractive()
     regs = check_regressions()
     if any(regs)
         exit(1)
