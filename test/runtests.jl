@@ -1,4 +1,3 @@
-using BenchmarkTools
 using KinematicCoordinateTransformations
 
 import LinearAlgebra: ×
@@ -12,6 +11,5 @@ Test.@testset "KinematicCoordinateTransformations" begin
     include("steady_rot_x.jl")
     include("constant_linear_map.jl")
     include("composed.jl")
-    include("benchmark.jl")
 
 end

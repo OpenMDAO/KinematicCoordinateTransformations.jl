@@ -8,23 +8,83 @@
     v
 end
 
-function (trans::ConstantVelocityTransformation)(t, x, v, a, j)
+function (trans::ConstantVelocityTransformation)(t, x, linear_only::Bool=false)
+    x_new = similar(x)
+
+    transform!(x_new, trans, t, x, linear_only)
+
+    return x_new
+end
+
+function (trans::ConstantVelocityTransformation)(t, x, v, linear_only::Bool=false)
+    x_new = similar(x)
+    v_new = similar(v)
+
+    transform!(x_new, v_new, trans, t, x, v, linear_only)
+
+    return x_new, v_new
+end
+
+function (trans::ConstantVelocityTransformation)(t, x, v, a, linear_only::Bool=false)
+    x_new = similar(x)
+    v_new = similar(v)
+    a_new = similar(a)
+
+    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
+
+    return x_new, v_new, a_new
+end
+
+function (trans::ConstantVelocityTransformation)(t, x, v, a, j, linear_only::Bool=false)
     x_new = similar(x)
     v_new = similar(v)
     a_new = similar(a)
     j_new = similar(j)
 
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j)
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
 
     return x_new, v_new, a_new, j_new
 end
 
-function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t, x, v, a, j)
-    x_new .= x .+ trans.x0 .+ (t - trans.t0)*trans.v
-    v_new .= v .+ trans.v
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t, x, v, a, j, linear_only::Bool=false)
+    x_new .= x
+    v_new .= v
     a_new .= a
     j_new .= j
+    if ! linear_only
+        x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+        v_new .+= trans.v
+    end
     return x_new, v_new, a_new, j_new
+end
+
+function transform!(x_new, v_new, a_new, trans::ConstantVelocityTransformation, t, x, v, a, linear_only::Bool=false)
+    x_new .= x
+    v_new .= v
+    a_new .= a
+    if ! linear_only
+        x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+        v_new .+= trans.v
+    end
+    return x_new, v_new, a_new
+end
+
+function transform!(x_new, v_new, trans::ConstantVelocityTransformation, t, x, v, linear_only::Bool=false)
+    x_new .= x
+    v_new .= v
+    if ! linear_only
+        x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+        v_new .+= trans.v
+    end
+    return x_new, v_new
+end
+
+function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_only::Bool=false)
+    x_new .= x
+    if ! linear_only
+        x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    end
+    return x_new
 end
 
 function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where {T,B}

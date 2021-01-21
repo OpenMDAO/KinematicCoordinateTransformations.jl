@@ -4,18 +4,45 @@
     linear
 end
 
-function (trans::ConstantLinearMap)(t, x, v, a, j)
+function (trans::ConstantLinearMap)(t, x, v, a, j, linear_only::Bool=false)
     x_new = similar(x)
     v_new = similar(v)
     a_new = similar(a)
     j_new = similar(j)
 
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j)
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
 
     return x_new, v_new, a_new, j_new
 end
 
-function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, v, a, j)
+function (trans::ConstantLinearMap)(t, x, v, a, linear_only::Bool=false)
+    x_new = similar(x)
+    v_new = similar(v)
+    a_new = similar(a)
+
+    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
+
+    return x_new, v_new, a_new
+end
+
+function (trans::ConstantLinearMap)(t, x, v, linear_only::Bool=false)
+    x_new = similar(x)
+    v_new = similar(v)
+
+    transform!(x_new, v_new, trans, t, x, v, linear_only)
+
+    return x_new, v_new
+end
+
+function (trans::ConstantLinearMap)(t, x, linear_only::Bool=false)
+    x_new = similar(x)
+
+    transform!(x_new, trans, t, x, linear_only)
+
+    return x_new
+end
+
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, v, a, j, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
     # a_new = trans.linear*a
@@ -25,6 +52,42 @@ function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, 
     mul!(v_new, trans.linear, v)
     mul!(a_new, trans.linear, a)
     mul!(j_new, trans.linear, j)
+
+    return nothing
+end
+
+function transform!(x_new, v_new, a_new, trans::ConstantLinearMap, t, x, v, a, linear_only::Bool=false)
+    # x_new = trans.linear*x
+    # v_new = trans.linear*v
+    # a_new = trans.linear*a
+    # j_new = trans.linear*j
+
+    mul!(x_new, trans.linear, x)
+    mul!(v_new, trans.linear, v)
+    mul!(a_new, trans.linear, a)
+
+    return nothing
+end
+
+function transform!(x_new, v_new, trans::ConstantLinearMap, t, x, v, linear_only::Bool=false)
+    # x_new = trans.linear*x
+    # v_new = trans.linear*v
+    # a_new = trans.linear*a
+    # j_new = trans.linear*j
+
+    mul!(x_new, trans.linear, x)
+    mul!(v_new, trans.linear, v)
+
+    return nothing
+end
+
+function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=false)
+    # x_new = trans.linear*x
+    # v_new = trans.linear*v
+    # a_new = trans.linear*a
+    # j_new = trans.linear*j
+
+    mul!(x_new, trans.linear, x)
 
     return nothing
 end
