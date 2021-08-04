@@ -19,6 +19,9 @@ export ConstantVelocityTransformation
 include("steady_rot_x.jl")
 export SteadyRotXTransformation
 
+include("steady_rot_z.jl")
+export SteadyRotZTransformation
+
 include("constant_linear_map.jl")
 export ConstantLinearMap
 

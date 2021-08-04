@@ -11,5 +11,6 @@ Test.@testset "KinematicCoordinateTransformations" begin
     include("steady_rot_x.jl")
     include("constant_linear_map.jl")
     include("composed.jl")
+    include("steady_rot_z.jl")
 
 end
