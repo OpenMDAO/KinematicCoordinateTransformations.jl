@@ -26,44 +26,6 @@ function ConstantAffineMap(t, trans::ConstantAffineMap)
     return trans
 end
 
-function (trans::ConstantAffineMap)(t, x, v, a, j, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-    j_new = similar(j)
-
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
-
-    return x_new, v_new, a_new, j_new
-end
-
-function (trans::ConstantAffineMap)(t, x, v, a, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-
-    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
-
-    return x_new, v_new, a_new
-end
-
-function (trans::ConstantAffineMap)(t, x, v, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-
-    transform!(x_new, v_new, trans, t, x, v, linear_only)
-
-    return x_new, v_new
-end
-
-function (trans::ConstantAffineMap)(t, x, linear_only::Bool=false)
-    x_new = similar(x)
-
-    transform!(x_new, trans, t, x, linear_only)
-
-    return x_new
-end
-
 function transform!(x_new, v_new, a_new, j_new, trans::ConstantAffineMap, t, x, v, a, j, linear_only::Bool=false)
     # x_new = trans.x_Mx*x                                              .+ trans.x_b
     # v_new = trans.v_Mx*x + trans.v_Mv*v                               .+ trans.v_b

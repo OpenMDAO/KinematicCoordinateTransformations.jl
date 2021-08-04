@@ -8,44 +8,6 @@
     v
 end
 
-function (trans::ConstantVelocityTransformation)(t, x, linear_only::Bool=false)
-    x_new = similar(x)
-
-    transform!(x_new, trans, t, x, linear_only)
-
-    return x_new
-end
-
-function (trans::ConstantVelocityTransformation)(t, x, v, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-
-    transform!(x_new, v_new, trans, t, x, v, linear_only)
-
-    return x_new, v_new
-end
-
-function (trans::ConstantVelocityTransformation)(t, x, v, a, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-
-    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
-
-    return x_new, v_new, a_new
-end
-
-function (trans::ConstantVelocityTransformation)(t, x, v, a, j, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-    j_new = similar(j)
-
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
-
-    return x_new, v_new, a_new, j_new
-end
-
 function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t, x, v, a, j, linear_only::Bool=false)
     x_new .= x
     v_new .= v
@@ -87,7 +49,7 @@ function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_o
     return x_new
 end
 
-function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where {T,B}
+function ConstantAffineMap(t, trans::ConstantVelocityTransformation)
     # OK, hmm... so this transformation will only affect the position and
     # velocity, of course. So...
     # x_new = x + trans.v*(t - t0)
@@ -96,11 +58,12 @@ function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where 
     dx = trans.x0 + trans.v*(t - trans.t0)
     dv = trans.v
     
-    zvector = StaticArrays.@SVector [zero(T), zero(T), zero(T)]
+    T = eltype(dx)
+    zvector = @SVector [zero(T), zero(T), zero(T)]
 
     # Can I use the Identity matrix for this? I'd have to adjust the type
     # declaration, I guess.
-    imatrix = StaticArrays.@SMatrix [
+    imatrix = @SMatrix [
         one(T) zero(T) zero(T);
         zero(T) one(T) zero(T);
         zero(T) zero(T) one(T)]
@@ -110,7 +73,7 @@ function ConstantAffineMap(t, trans::ConstantVelocityTransformation{T,B}) where 
     # the "real" matricies/vectors. And I don't think it would make a huge
     # difference, since once I compose the transformation, the composed matrix
     # will be non-zero.
-    zmatrix = StaticArrays.@SMatrix [
+    zmatrix = @SMatrix [
         zero(T) zero(T) zero(T);
         zero(T) zero(T) zero(T);
         zero(T) zero(T) zero(T)]

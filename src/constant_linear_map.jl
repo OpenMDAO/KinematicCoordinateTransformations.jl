@@ -4,44 +4,6 @@
     linear
 end
 
-function (trans::ConstantLinearMap)(t, x, v, a, j, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-    j_new = similar(j)
-
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
-
-    return x_new, v_new, a_new, j_new
-end
-
-function (trans::ConstantLinearMap)(t, x, v, a, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-
-    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
-
-    return x_new, v_new, a_new
-end
-
-function (trans::ConstantLinearMap)(t, x, v, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-
-    transform!(x_new, v_new, trans, t, x, v, linear_only)
-
-    return x_new, v_new
-end
-
-function (trans::ConstantLinearMap)(t, x, linear_only::Bool=false)
-    x_new = similar(x)
-
-    transform!(x_new, trans, t, x, linear_only)
-
-    return x_new
-end
-
 function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, v, a, j, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
@@ -92,12 +54,12 @@ function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=fal
     return nothing
 end
 
-function ConstantAffineMap(t, trans::ConstantLinearMap{M}) where {M}
-    T = eltype(M)
+function ConstantAffineMap(t, trans::ConstantLinearMap)
+    T = eltype(trans.linear)
 
-    zvector = StaticArrays.@SVector [zero(T), zero(T), zero(T)]
+    zvector = @SVector [zero(T), zero(T), zero(T)]
 
-    zmatrix = StaticArrays.@SMatrix [
+    zmatrix = @SMatrix [
         zero(T) zero(T) zero(T);
         zero(T) zero(T) zero(T);
         zero(T) zero(T) zero(T)]

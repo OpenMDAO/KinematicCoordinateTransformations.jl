@@ -2,10 +2,13 @@ module KinematicCoordinateTransformations
 
 using ConcreteStructs: @concrete
 using LinearAlgebra
-import StaticArrays
+using StaticArrays: @SVector, @SMatrix
 
 abstract type KinematicTransformation end
 export KinematicTransformation
+
+include("fallback_transforms.jl")
+export transform!
 
 include("constant_affine.jl")
 export ConstantAffineMap
@@ -21,7 +24,5 @@ export ConstantLinearMap
 
 include("composed.jl")
 export compose
-
-export transform!
 
 end # module

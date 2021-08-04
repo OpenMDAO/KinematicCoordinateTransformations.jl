@@ -6,97 +6,7 @@
     θ
 end
 
-function (trans::SteadyRotXTransformation)(t, x, v, a, j, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-    j_new = similar(j)
-
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
-
-    return x_new, v_new, a_new, j_new
-end
-
-function (trans::SteadyRotXTransformation)(t, x, v, a, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-
-    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
-
-    return x_new, v_new, a_new
-end
-
-function (trans::SteadyRotXTransformation)(t, x, v, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-
-    transform!(x_new, v_new, trans, t, x, v, linear_only)
-
-    return x_new, v_new
-end
-
-function (trans::SteadyRotXTransformation)(t, x, linear_only::Bool=false)
-    x_new = similar(x)
-
-    transform!(x_new, v_new, trans, t, x, linear_only)
-
-    return x_new
-end
-
-function transform!(x_new, v_new, a_new, j_new, trans::SteadyRotXTransformation, t, x, v, a, j, linear_only::Bool=false)
-    # x_new = R*x
-    # v_new = v + Ωx*x
-    # a_new = a + 2*Ωx*v + ΩxΩx*x
-    # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
-
-    affine = ConstantAffineMap(t, trans)
-
-    transform!(x_new, v_new, a_new, j_new, affine, t, x, v, a, j, linear_only)
-
-    return nothing
-end
-
-function transform!(x_new, v_new, a_new, trans::SteadyRotXTransformation, t, x, v, a, linear_only::Bool=false)
-    # x_new = R*x
-    # v_new = v + Ωx*x
-    # a_new = a + 2*Ωx*v + ΩxΩx*x
-    # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
-
-    affine = ConstantAffineMap(t, trans)
-
-    transform!(x_new, v_new, a_new, affine, t, x, v, a, linear_only)
-
-    return nothing
-end
-
-function transform!(x_new, v_new, trans::SteadyRotXTransformation, t, x, v, linear_only::Bool=false)
-    # x_new = R*x
-    # v_new = v + Ωx*x
-    # a_new = a + 2*Ωx*v + ΩxΩx*x
-    # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
-
-    affine = ConstantAffineMap(t, trans)
-
-    transform!(x_new, v_new, affine, t, x, v, linear_only)
-
-    return nothing
-end
-
-function transform!(x_new, trans::SteadyRotXTransformation, t, x, linear_only::Bool=false)
-    # x_new = R*x
-    # v_new = v + Ωx*x
-    # a_new = a + 2*Ωx*v + ΩxΩx*x
-    # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
-
-    affine = ConstantAffineMap(t, trans)
-
-    transform!(x_new, affine, t, x, linear_only)
-
-    return nothing
-end
-
-function ConstantAffineMap(t, trans::SteadyRotXTransformation{T}) where {T}
+function ConstantAffineMap(t, trans::SteadyRotXTransformation)
     ω = trans.ω
     angle = trans.ω*(t - trans.t0) + trans.θ
     s, c = sincos(angle)
@@ -108,35 +18,37 @@ function ConstantAffineMap(t, trans::SteadyRotXTransformation{T}) where {T}
     ωc = ω*c
     ωωc = ω*ωc
     ωωωc = ω*ωωc
+
+    T = typeof(angle)
     
     # Rotation matrix.
-    R = StaticArrays.@SMatrix [
+    R = @SMatrix [
         one(T)  zero(T)  zero(T);
         zero(T)  c  -s;
         zero(T)  s   c]
 
     # Omega cross matrix.
-    Ωx = StaticArrays.@SMatrix [
+    Ωx = @SMatrix [
         zero(T)  zero(T)  zero(T);
         zero(T)  -ωs  -ωc;
         zero(T)   ωc  -ωs]
 
     # Omega cross Omega cross matrix.
-    ΩxΩx = StaticArrays.@SMatrix [
+    ΩxΩx = @SMatrix [
         zero(T)  zero(T)  zero(T);
         zero(T)  -ωωc  ωωs;
         zero(T)  -ωωs  -ωωc]
     
     # Omega cross Omega cross Omega cross matrix.
-    ΩxΩxΩx = StaticArrays.@SMatrix [
+    ΩxΩxΩx = @SMatrix [
         zero(T)  zero(T)  zero(T);
         zero(T)   ωωωs  ωωωc;
         zero(T)  -ωωωc  ωωωs]
 
-    zvector = StaticArrays.@SVector [zero(T), zero(T), zero(T)]
+    zvector = @SVector [zero(T), zero(T), zero(T)]
     # Can I use the Identity matrix for this? I'd have to adjust the type
     # declaration, I guess.
-    imatrix = StaticArrays.@SMatrix [
+    imatrix = @SMatrix [
         one(T)  zero(T)  zero(T);
         zero(T)  one(T)  zero(T);
         zero(T)  zero(T)  one(T)]
