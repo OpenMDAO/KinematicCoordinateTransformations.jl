@@ -135,13 +135,13 @@ Test.@testset "Steady X rotation transformation" begin
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j, true)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
     end
@@ -176,13 +176,13 @@ Test.@testset "Steady X rotation transformation" begin
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j, true)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
     end
@@ -215,18 +215,19 @@ Test.@testset "Steady X rotation transformation" begin
         X = x[1]*ihat + x[2]*jhat + x[3]*khat
         V = v[1]*ihat + v[2]*jhat + v[3]*khat
         A = a[1]*ihat + a[2]*jhat + a[3]*khat
+        J = j[1]*ihat + j[2]*jhat + j[3]*khat
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ v + Ω×X
-        Test.@test a_new ≈ a + Ω×(Ω×X) + 2*Ω×V
-        Test.@test j_new ≈ j + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
+        Test.@test v_new ≈ V + Ω×X
+        Test.@test a_new ≈ A + Ω×(Ω×X) + 2*Ω×V
+        Test.@test j_new ≈ J + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j, true)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ v + Ω×X
-        Test.@test a_new ≈ a + Ω×(Ω×X) + 2*Ω×V
-        Test.@test j_new ≈ j + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
+        Test.@test v_new ≈ V + Ω×X
+        Test.@test a_new ≈ A + Ω×(Ω×X) + 2*Ω×V
+        Test.@test j_new ≈ J + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
     end
 
     Test.@testset "Comparison to stationary hand-calculations" begin
@@ -366,6 +367,75 @@ Test.@testset "Steady X rotation transformation" begin
         Test.@test j_new ≈ [0.0, -3*ω^2*v[2], -ω^3*r]
     end
 
+    Test.@testset "Comparison to constant-velocity hand-calculations, 180° offset" begin
+        t0 = 0.0
+        ω = 2*pi
+        θ = pi
+        trans = SteadyRotXTransformation(t0, ω, θ)
+
+        x = [0.0, 2.0, 0.0]
+        v = [0.0, 3.0, 0.0]
+        a = [0.0, 0.0, 0.0]
+        j = [0.0, 0.0, 0.0]
+
+        t = 0.0
+        Test.@inferred trans(t, x, v, a, j)
+
+        x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
+
+        # Angle between the source and target frames is *not* zero, so x_new should be...
+        Test.@test x_new ≈ -x
+
+        # The point is moving in the source reference frame, so the
+        # velocity in the target frame will be what it is in the rotating frame,
+        # then add the velocity due to the rotation, which will
+        # be ω*r pointed in the tangential direction. But we have a 180° offset,
+        # which means the y and z velocities will switch signs, too.
+        r = sqrt(sum(x[2:end].^2))
+        Test.@test v_new ≈ -(v .+ [0.0, 0.0, ω*r])
+
+        # The acceleration will include ω^2*r centrifigal acceleration, and the Coriolis acceleration.
+        Test.@test a_new ≈ [0.0, -(-ω^2*r), -(2*ω*v[2])]
+
+        # And what will the jerk be? Well, the derivative of acceleration. The
+        # acceleration can be expressed as `a = -ω^2*r*rhat`, where `rhat` is
+        # the unit vector pointing in the radial direction. So the derivative
+        # of that would be `j = -ω^2*r*drhat_dt`, which would be `j =
+        # -ω^2*r*(ω*thetahat) = -ω^3*r*thetahat`, where `thetahat` is the unit
+        # vector in the tangential direction (same direction as the rotation of
+        # the frame), right? And then have to do something similar for the
+        # Coreolis acceleration.
+        Test.@test j_new ≈ [0.0, -(-3*ω^2*v[2]), -(-ω^3*r)]
+
+        # Doing all this with `linear_only = true`, which shouldn't change
+        # anything.
+        linear_only = true
+        x_new, v_new, a_new, j_new = trans(t, x, v, a, j, linear_only)
+
+        # Angle between the source and target frames is *not* zero, so x_new should be...
+        Test.@test x_new ≈ -x
+
+        # The point is moving in the source reference frame, so the
+        # velocity in the target frame will be what it is in the rotating frame,
+        # then add the velocity due to the rotation, which will
+        # be ω*r pointed in the tangential direction.
+        r = sqrt(sum(x[2:end].^2))
+        Test.@test v_new ≈ -(v .+ [0.0, 0.0, ω*r])
+
+        # The acceleration will include ω^2*r centrifigal acceleration, and the Coriolis acceleration.
+        Test.@test a_new ≈ [0.0, -(-ω^2*r), -(2*ω*v[2])]
+
+        # And what will the jerk be? Well, the derivative of acceleration. The
+        # acceleration can be expressed as `a = -ω^2*r*rhat`, where `rhat` is
+        # the unit vector pointing in the radial direction. So the derivative
+        # of that would be `j = -ω^2*r*drhat_dt`, which would be `j =
+        # -ω^2*r*(ω*thetahat) = -ω^3*r*thetahat`, where `thetahat` is the unit
+        # vector in the tangential direction (same direction as the rotation of
+        # the frame), right? And then have to do something similar for the
+        # Coreolis acceleration.
+        Test.@test j_new ≈ [0.0, -(-3*ω^2*v[2]), -(-ω^3*r)]
+    end
+
     Test.@testset "Comparison to accelerating hand-calculations" begin
         t0 = 0.0
         ω = 2*pi
@@ -442,6 +512,82 @@ Test.@testset "Steady X rotation transformation" begin
         # derivative of it I have to cross it with the rotation vector, which
         # means it will be pointing in the tangential direction. OK.
         Test.@test j_new ≈ [0.0, -3*ω^2*v[2], -ω^3*r + 3*ω*a[2]]
+    end
+
+    Test.@testset "Comparison to accelerating hand-calculations, 180° offset" begin
+        t0 = 0.0
+        ω = 2*pi
+        θ = pi
+        trans = SteadyRotXTransformation(t0, ω, θ)
+
+        x = [0.0, 2.0, 0.0]
+        v = [0.0, 3.0, 0.0]
+        a = [0.0, 4.0, 0.0]
+        j = [0.0, 0.0, 0.0]
+
+        t = 0.0
+        Test.@inferred trans(t, x, v, a, j)
+
+        x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
+
+        # Angle between the source and target frames is *not* zero, so x_new should be...
+        Test.@test x_new ≈ -x
+
+        # The point is moving in the source reference frame, so the
+        # velocity in the target frame will be what it is in the rotating frame,
+        # then add the velocity due to the rotation, which will
+        # be ω*r pointed in the tangential direction.
+        r = sqrt(sum(x[2:end].^2))
+        Test.@test v_new ≈ -(v .+ [0.0, 0.0, ω*r])
+
+        # The acceleration will include ω^2*r centrifigal acceleration, and the Coriolis acceleration.
+        Test.@test a_new ≈ -(a .+ [0.0, -ω^2*r, 2*ω*v[2]])
+
+        # And what will the jerk be? Well, the derivative of acceleration. The
+        # acceleration can be expressed as `a = -ω^2*r*rhat`, where `rhat` is
+        # the unit vector pointing in the radial direction. So the derivative
+        # of that would be `j = -ω^2*r*drhat_dt`, which would be `j =
+        # -ω^2*r*(ω*thetahat) = -ω^3*r*thetahat`, where `thetahat` is the unit
+        # vector in the tangential direction (same direction as the rotation of
+        # the frame), right? And then have to do something similar for the
+        # Coreolis acceleration. And something for the acceleration in the
+        # rotating frame. In the rotating frame, the acceleration is pointed
+        # radially outward. But it's constant, right? Yeah, but when I take the
+        # derivative of it I have to cross it with the rotation vector, which
+        # means it will be pointing in the tangential direction. OK.
+        Test.@test j_new ≈ [0.0, -(-3*ω^2*v[2]), -(-ω^3*r + 3*ω*a[2])]
+
+        # Do it all again with `linear_only = true`, which shouldn't change
+        # anything.
+        linear_only = true
+        x_new, v_new, a_new, j_new = trans(t, x, v, a, j, linear_only)
+
+        # Angle between the source and target frames is *not* zero, so x_new should be...
+        Test.@test x_new ≈ -x
+
+        # The point is moving in the source reference frame, so the
+        # velocity in the target frame will be what it is in the rotating frame,
+        # then add the velocity due to the rotation, which will
+        # be ω*r pointed in the tangential direction.
+        r = sqrt(sum(x[2:end].^2))
+        Test.@test v_new ≈ -(v .+ [0.0, 0.0, ω*r])
+
+        # The acceleration will include ω^2*r centrifigal acceleration, and the Coriolis acceleration.
+        Test.@test a_new ≈ -(a .+ [0.0, -ω^2*r, 2*ω*v[2]])
+
+        # And what will the jerk be? Well, the derivative of acceleration. The
+        # acceleration can be expressed as `a = -ω^2*r*rhat`, where `rhat` is
+        # the unit vector pointing in the radial direction. So the derivative
+        # of that would be `j = -ω^2*r*drhat_dt`, which would be `j =
+        # -ω^2*r*(ω*thetahat) = -ω^3*r*thetahat`, where `thetahat` is the unit
+        # vector in the tangential direction (same direction as the rotation of
+        # the frame), right? And then have to do something similar for the
+        # Coreolis acceleration. And something for the acceleration in the
+        # rotating frame. In the rotating frame, the acceleration is pointed
+        # radially outward. But it's constant, right? Yeah, but when I take the
+        # derivative of it I have to cross it with the rotation vector, which
+        # means it will be pointing in the tangential direction. OK.
+        Test.@test j_new ≈ -[0.0, -3*ω^2*v[2], -ω^3*r + 3*ω*a[2]]
     end
 
 end

@@ -46,34 +46,28 @@ function ConstantAffineMap(t, trans::SteadyRotXTransformation)
         zero(T)  -ωωωc  ωωωs]
 
     zvector = @SVector [zero(T), zero(T), zero(T)]
-    # Can I use the Identity matrix for this? I'd have to adjust the type
-    # declaration, I guess.
-    imatrix = @SMatrix [
-        one(T)  zero(T)  zero(T);
-        zero(T)  one(T)  zero(T);
-        zero(T)  zero(T)  one(T)]
     
     # x_new = R*x
-    # v_new = v + Ωx*x
-    # a_new = a + 2*Ωx*v + ΩxΩx*x
-    # j_new = j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
+    # v_new = R*v + Ωx*x
+    # a_new = R*a + 2*Ωx*v + ΩxΩx*x
+    # j_new = R*j + 3*Ωx*a + 3*ΩxΩx*v + ΩxΩxΩx*x
 
     x_Mx = R
     x_b = zvector
 
     v_Mx = Ωx
-    v_Mv = imatrix
+    v_Mv = R
     v_b = zvector
 
     a_Mx = ΩxΩx
     a_Mv = 2*Ωx
-    a_Ma = imatrix
+    a_Ma = R
     a_b = zvector
 
     j_Mx = ΩxΩxΩx
     j_Mv = 3*ΩxΩx
     j_Ma = 3*Ωx
-    j_Mj = imatrix
+    j_Mj = R
     j_b = zvector
 
     return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)

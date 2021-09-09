@@ -135,13 +135,13 @@ Test.@testset "Steady Z rotation transformation" begin
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j, true)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ Ω×X + v
+        Test.@test v_new ≈ Ω×X + V
         Test.@test a_new ≈ Ω×(Ω×X) + 2*Ω×V
         Test.@test j_new ≈ Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V))
     end
@@ -174,18 +174,19 @@ Test.@testset "Steady Z rotation transformation" begin
         X = x[1]*ihat + x[2]*jhat + x[3]*khat
         V = v[1]*ihat + v[2]*jhat + v[3]*khat
         A = a[1]*ihat + a[2]*jhat + a[3]*khat
+        J = j[1]*ihat + j[2]*jhat + j[3]*khat
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ v + Ω×X
-        Test.@test a_new ≈ a + Ω×(Ω×X) + 2*Ω×V
-        Test.@test j_new ≈ j + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
+        Test.@test v_new ≈ V + Ω×X
+        Test.@test a_new ≈ A + Ω×(Ω×X) + 2*Ω×V
+        Test.@test j_new ≈ J + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j, true)
         Test.@test x_new ≈ X
-        Test.@test v_new ≈ v + Ω×X
-        Test.@test a_new ≈ a + Ω×(Ω×X) + 2*Ω×V
-        Test.@test j_new ≈ j + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
+        Test.@test v_new ≈ V + Ω×X
+        Test.@test a_new ≈ A + Ω×(Ω×X) + 2*Ω×V
+        Test.@test j_new ≈ J + Ω×(Ω×(Ω×X)) + 3*(Ω×(Ω×V)) + 3*(Ω×A)
     end
 
     Test.@testset "Comparison to stationary hand-calculations" begin
