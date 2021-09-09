@@ -1,7 +1,7 @@
 name = "KinematicCoordinateTransformations"
 uuid = "730d3219-0a85-48f9-b699-9f31f8913d09"
 authors = ["Ingraham, Daniel James (GRC-LTV0) <daniel.j.ingraham@nasa.gov>"]
-version = "0.4.0"
+version = "0.4.1"
 
 [deps]
 ConcreteStructs = "2569d6c7-a4a2-43d3-a901-331e8e4be471"
