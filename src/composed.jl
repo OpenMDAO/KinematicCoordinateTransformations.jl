@@ -1,4 +1,4 @@
-function compose(t, trans1::ConstantVelocityTransformation, trans2::ConstantVelocityTransformation)
+function compose(trans1::ConstantVelocityTransformation, trans2::ConstantVelocityTransformation)
     v = trans1.v + trans2.v
     # So, t0 is the time when the source frame is at x0 from the target frame.
     # So, the x will look like this:
@@ -35,11 +35,19 @@ function compose(t, trans1::ConstantVelocityTransformation, trans2::ConstantVelo
     return ConstantVelocityTransformation(t0, x0, v)
 end
 
-function compose(t, trans1::ConstantLinearMap, trans2::ConstantLinearMap)
+function compose(t::Number, trans1::ConstantVelocityTransformation, trans2::ConstantVelocityTransformation)
+    return compose(trans1, trans2)
+end
+
+function compose(trans1::ConstantLinearMap, trans2::ConstantLinearMap)
     return ConstantLinearMap(trans1.linear*trans2.linear)
 end
 
-function compose(t, trans1::ConstantAffineMap, trans2::ConstantAffineMap)
+function compose(t::Number, trans1::ConstantLinearMap, trans2::ConstantLinearMap)
+    return compose(trans1, trans2)
+end
+
+function compose(trans1::ConstantAffineMap, trans2::ConstantAffineMap)
     # To make things simpler.
     x_Mx1 = trans1.x_Mx
     x_b1 = trans1.x_b
@@ -117,10 +125,20 @@ function compose(t, trans1::ConstantAffineMap, trans2::ConstantAffineMap)
     return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
 end
 
+function compose(t::Number, trans1::ConstantAffineMap, trans2::ConstantAffineMap)
+    return compose(trans1, trans2)
+end
+
 # Fallback compose.
-function compose(t, trans1, trans2)
+function compose(t::Number, trans1, trans2)
     cam1 = ConstantAffineMap(t, trans1)
     cam2 = ConstantAffineMap(t, trans2)
     return compose(t, cam1, cam2)
 end
 
+# Fallback compose.
+function compose(trans1, trans2)
+    cam1 = ConstantAffineMap(trans1)
+    cam2 = ConstantAffineMap(trans2)
+    return compose(cam1, cam2)
+end

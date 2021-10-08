@@ -8,7 +8,7 @@
     v
 end
 
-function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t, x, v, a, j, linear_only::Bool=false)
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, t::Number, x, v, a, j, linear_only::Bool=false)
     x_new .= x
     v_new .= v
     a_new .= a
@@ -20,7 +20,7 @@ function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransform
     return x_new, v_new, a_new, j_new
 end
 
-function transform!(x_new, v_new, a_new, trans::ConstantVelocityTransformation, t, x, v, a, linear_only::Bool=false)
+function transform!(x_new, v_new, a_new, trans::ConstantVelocityTransformation, t::Number, x, v, a, linear_only::Bool=false)
     x_new .= x
     v_new .= v
     a_new .= a
@@ -31,7 +31,7 @@ function transform!(x_new, v_new, a_new, trans::ConstantVelocityTransformation, 
     return x_new, v_new, a_new
 end
 
-function transform!(x_new, v_new, trans::ConstantVelocityTransformation, t, x, v, linear_only::Bool=false)
+function transform!(x_new, v_new, trans::ConstantVelocityTransformation, t::Number, x, v, linear_only::Bool=false)
     x_new .= x
     v_new .= v
     if ! linear_only
@@ -41,7 +41,7 @@ function transform!(x_new, v_new, trans::ConstantVelocityTransformation, t, x, v
     return x_new, v_new
 end
 
-function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_only::Bool=false)
+function transform!(x_new, trans::ConstantVelocityTransformation, t::Number, x, linear_only::Bool=false)
     x_new .= x
     if ! linear_only
         x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
@@ -49,7 +49,31 @@ function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_o
     return x_new
 end
 
-function ConstantAffineMap(t, trans::ConstantVelocityTransformation)
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantVelocityTransformation, x, v, a, j, linear_only::Bool=false)
+    t = trans.t0
+    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
+    return x_new, v_new, a_new, j_new
+end
+
+function transform!(x_new, v_new, a_new, trans::ConstantVelocityTransformation, x, v, a, linear_only::Bool=false)
+    t = trans.t0
+    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
+    return x_new, v_new, a_new
+end
+
+function transform!(x_new, v_new, trans::ConstantVelocityTransformation, x, v, linear_only::Bool=false)
+    t = trans.t0
+    transform!(x_new, v_new, trans, t, x, v, linear_only)
+    return x_new, v_new
+end
+
+function transform!(x_new, trans::ConstantVelocityTransformation, x, linear_only::Bool=false)
+    t = trans.t0
+    transform!(x_new, trans, t, x, linear_only)
+    return x_new
+end
+
+function ConstantAffineMap(t::Number, trans::ConstantVelocityTransformation)
     # OK, hmm... so this transformation will only affect the position and
     # velocity, of course. So...
     # x_new = x + trans.v*(t - t0)
@@ -97,4 +121,9 @@ function ConstantAffineMap(t, trans::ConstantVelocityTransformation)
     j_b = zvector
 
     return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
+end
+
+function ConstantAffineMap(trans::ConstantVelocityTransformation)
+    t = trans.t0
+    return ConstantAffineMap(t, trans)
 end

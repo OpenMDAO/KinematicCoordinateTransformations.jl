@@ -6,7 +6,7 @@
     θ
 end
 
-function ConstantAffineMap(t, trans::SteadyRotXTransformation)
+function ConstantAffineMap(t::Number, trans::SteadyRotXTransformation)
     ω = trans.ω
     angle = trans.ω*(t - trans.t0) + trans.θ
     s, c = sincos(angle)
@@ -73,3 +73,7 @@ function ConstantAffineMap(t, trans::SteadyRotXTransformation)
     return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
 end
 
+function ConstantAffineMap(trans::SteadyRotXTransformation)
+    t = trans.t0
+    return ConstantAffineMap(t, trans)
+end

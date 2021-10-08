@@ -6,7 +6,7 @@
     θ
 end
 
-function ConstantAffineMap(t, trans::SteadyRotZTransformation{T1,T2,T3}) where {T1,T2,T3}
+function ConstantAffineMap(t::Number, trans::SteadyRotZTransformation{T1,T2,T3}) where {T1,T2,T3}
     # Is this necessary? Not sure.
     T = promote_type(T1, promote_type(T2, T3))
 
@@ -24,4 +24,9 @@ function ConstantAffineMap(t, trans::SteadyRotZTransformation{T1,T2,T3}) where {
     trans123 = compose(t, trans3, trans12)
 
     return trans123
+end
+
+function ConstantAffineMap(trans::SteadyRotZTransformation)
+    t = trans.t0
+    return ConstantAffineMap(t, trans)
 end

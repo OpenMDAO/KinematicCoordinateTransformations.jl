@@ -4,7 +4,7 @@
     linear
 end
 
-function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, v, a, j, linear_only::Bool=false)
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, x, v, a, j, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
     # a_new = trans.linear*a
@@ -18,7 +18,7 @@ function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t, x, 
     return nothing
 end
 
-function transform!(x_new, v_new, a_new, trans::ConstantLinearMap, t, x, v, a, linear_only::Bool=false)
+function transform!(x_new, v_new, a_new, trans::ConstantLinearMap, x, v, a, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
     # a_new = trans.linear*a
@@ -31,7 +31,7 @@ function transform!(x_new, v_new, a_new, trans::ConstantLinearMap, t, x, v, a, l
     return nothing
 end
 
-function transform!(x_new, v_new, trans::ConstantLinearMap, t, x, v, linear_only::Bool=false)
+function transform!(x_new, v_new, trans::ConstantLinearMap, x, v, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
     # a_new = trans.linear*a
@@ -43,7 +43,7 @@ function transform!(x_new, v_new, trans::ConstantLinearMap, t, x, v, linear_only
     return nothing
 end
 
-function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=false)
+function transform!(x_new, trans::ConstantLinearMap, x, linear_only::Bool=false)
     # x_new = trans.linear*x
     # v_new = trans.linear*v
     # a_new = trans.linear*a
@@ -54,7 +54,27 @@ function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=fal
     return nothing
 end
 
-function ConstantAffineMap(t, trans::ConstantLinearMap)
+function transform!(x_new, v_new, a_new, j_new, trans::ConstantLinearMap, t::Number, x, v, a, j, linear_only::Bool=false)
+    transform!(x_new, v_new, a_new, j_new, trans, x, v, a, j, linear_only)
+    return nothing
+end
+
+function transform!(x_new, v_new, a_new, trans::ConstantLinearMap, t::Number, x, v, a, linear_only::Bool=false)
+    transform!(x_new, v_new, a_new, trans, x, v, a, linear_only)
+    return nothing
+end
+
+function transform!(x_new, v_new, trans::ConstantLinearMap, t::Number, x, v, linear_only::Bool=false)
+    transform!(x_new, v_new, trans, x, v, linear_only)
+    return nothing
+end
+
+function transform!(x_new, trans::ConstantLinearMap, t::Number, x, linear_only::Bool=false)
+    transform!(x_new, trans, x, linear_only)
+    return nothing
+end
+
+function ConstantAffineMap(trans::ConstantLinearMap)
     T = eltype(trans.linear)
 
     zvector = @SVector [zero(T), zero(T), zero(T)]
@@ -88,4 +108,8 @@ function ConstantAffineMap(t, trans::ConstantLinearMap)
     j_b = zvector
 
     return ConstantAffineMap(x_Mx, x_b, v_Mx, v_Mv, v_b, a_Mx, a_Mv, a_Ma, a_b, j_Mx, j_Mv, j_Ma, j_Mj, j_b)
+end
+
+function ConstantAffineMap(t::Number, trans::ConstantLinearMap)
+    return ConstantAffineMap(trans)
 end
