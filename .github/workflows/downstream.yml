@@ -29,7 +29,7 @@ jobs:
           arch: x64
       - uses: julia-actions/julia-buildpkg@latest
       - name: Clone Downstream
-      - uses: webfactory/ssh-agent@v0.5.2
+        uses: webfactory/ssh-agent@v0.5.2
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
         uses: actions/checkout@v2
