@@ -37,6 +37,7 @@ jobs:
           repository: ${{ matrix.package.user }}/${{ matrix.package.repo }}
           path: downstream
           ref: main
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Load this and run the downstream tests
         shell: julia --color=yes --project=downstream {0}
         run: |
