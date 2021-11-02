@@ -36,6 +36,7 @@ jobs:
         with:
           repository: ${{ matrix.package.user }}/${{ matrix.package.repo }}
           path: downstream
+          ref: main
       - name: Load this and run the downstream tests
         shell: julia --color=yes --project=downstream {0}
         run: |
