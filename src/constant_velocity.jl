@@ -49,6 +49,84 @@ function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_o
     return x_new
 end
 
+function transform(trans::ConstantVelocityTransformation, t, x, v, a, j, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v + trans.v
+    end
+
+    return x_new, v_new, a, j
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, v, a, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v + trans.v
+    end
+
+    return x_new, v_new, a
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, v, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v + trans.v
+    end
+
+    return x_new, v_new
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+    else
+        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
+    end
+
+    return x_new
+end
+
 function ConstantAffineMap(t, trans::ConstantVelocityTransformation)
     # OK, hmm... so this transformation will only affect the position and
     # velocity, of course. So...

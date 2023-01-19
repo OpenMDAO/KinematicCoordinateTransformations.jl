@@ -54,6 +54,36 @@ function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=fal
     return nothing
 end
 
+function transform(trans::ConstantLinearMap, t, x, v, a, j, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+    a_new = trans.linear*a
+    j_new = trans.linear*j
+
+    return x_new, v_new, a_new, j_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, v, a, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+    a_new = trans.linear*a
+
+    return x_new, v_new, a_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, v, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+
+    return x_new, v_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, linear_only::Bool=false)
+    x_new = trans.linear*x
+
+    return x_new
+end
+
 function ConstantAffineMap(t, trans::ConstantLinearMap)
     T = eltype(trans.linear)
 
