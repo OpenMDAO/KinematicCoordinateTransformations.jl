@@ -136,10 +136,10 @@ function transform(trans::ConstantAffineMap, t, x, v, a, j, linear_only::Bool=fa
     j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j
 
     if ! linear_only
-        x_new = x_new + trans.x_b
-        v_new = v_new + trans.v_b
-        a_new = a_new + trans.a_b
-        j_new = j_new + trans.j_b
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
+        a_new = a_new .+ trans.a_b
+        j_new = j_new .+ trans.j_b
     end
 
     return x_new, v_new, a_new, j_new
@@ -156,9 +156,9 @@ function transform(trans::ConstantAffineMap, t, x, v, a, linear_only::Bool=false
     a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a
 
     if ! linear_only
-        x_new = x_new + trans.x_b
-        v_new = v_new + trans.v_b
-        a_new = a_new + trans.a_b
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
+        a_new = a_new .+ trans.a_b
     end
 
     return x_new, v_new, a_new
@@ -174,8 +174,8 @@ function transform(trans::ConstantAffineMap, t, x, v, linear_only::Bool=false)
     v_new = trans.v_Mx*x + trans.v_Mv*v
 
     if ! linear_only
-        x_new = x_new + trans.x_b
-        v_new = v_new + trans.v_b
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
     end
 
     return x_new, v_new
@@ -190,7 +190,7 @@ function transform(trans::ConstantAffineMap, t, x, linear_only::Bool=false)
     x_new = trans.x_Mx*x
 
     if ! linear_only
-        x_new = x_new + trans.x_b
+        x_new = x_new .+ trans.x_b
     end
 
     return x_new

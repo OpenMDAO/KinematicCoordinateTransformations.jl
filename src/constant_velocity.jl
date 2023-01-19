@@ -62,8 +62,8 @@ function transform(trans::ConstantVelocityTransformation, t, x, v, a, j, linear_
         x_new = x
         v_new = v
     else
-        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
-        v_new = v + trans.v
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
     end
 
     return x_new, v_new, a, j
@@ -82,8 +82,8 @@ function transform(trans::ConstantVelocityTransformation, t, x, v, a, linear_onl
         x_new = x
         v_new = v
     else
-        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
-        v_new = v + trans.v
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
     end
 
     return x_new, v_new, a
@@ -102,8 +102,8 @@ function transform(trans::ConstantVelocityTransformation, t, x, v, linear_only::
         x_new = x
         v_new = v
     else
-        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
-        v_new = v + trans.v
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
     end
 
     return x_new, v_new
@@ -121,7 +121,7 @@ function transform(trans::ConstantVelocityTransformation, t, x, linear_only::Boo
     if linear_only
         x_new = x
     else
-        x_new = x + trans.x0 .+ (t - trans.t0)*trans.v
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
     end
 
     return x_new

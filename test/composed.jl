@@ -6,10 +6,10 @@ Test.@testset "Composed" begin
 
         t = 5.0
         t3 = compose(t, trans1, trans2)
-        x = [3.0, 4.0, 5.0]
-        v = [4.0, 5.0, 6.0]
-        a = [2.0, 3.0, 4.0]
-        j = [1.0, 2.0, 3.0]
+        x = StaticArrays.@SVector [3.0, 4.0, 5.0]
+        v = StaticArrays.@SVector [4.0, 5.0, 6.0]
+        a = StaticArrays.@SVector [2.0, 3.0, 4.0]
+        j = StaticArrays.@SVector [1.0, 2.0, 3.0]
 
         Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         Test.@inferred t3(t, x, v, a, j)
