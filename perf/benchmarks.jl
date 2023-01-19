@@ -1,3 +1,5 @@
+module KCTBenchmarks
+
 using BenchmarkTools
 using KinematicCoordinateTransformations
 
@@ -180,3 +182,5 @@ if ! isinteractive()
         exit(1)
     end
 end
+
+end # module
