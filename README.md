@@ -8,7 +8,6 @@ The transformations currently supported:
   * `ConstantAffineMap`: transformation of the form `x_new = A*x + b` for input vector `x`, where `A` and `b` are independent of time.
   * `ConstantLinearMap`: transformation of the form `x_new = A*x` for input vector `x`, where `A` is independent of time.
   * `ConstantVelocityTransformation`: transformation of the form `x_new = x .+ x0 .+ (t - t0).*v0`, where `x0`, `t0`, and `v0` are parameters associated with the transformation, and `t` is time.
-  * `ConstantVelocityTransformation`: transformation of the form `x_new = x .+ x0 .+ (t - t0).*v0`, where `x0`, `t0`, and `v0` are parameters associated with the transformation, and `t` is time.
   * `SteadyRot{X,Y,Z}Transformation`: steady rotations about the ``X``, ``Y`` or ``Z`` axes. "Steady" here means rotating at a constant rate.
 
 ## Acknowledgements
