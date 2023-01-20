@@ -1,5 +1,10 @@
 # This is completely stolen from CoordinateTransformations.jl. Every vector will
 # be transformed the same way, I guess, so I only need one matrix.
+"""
+    ConstantLinearMap(A)
+
+Construct a reference frame transformation of the form `x_target = A*x_source`, where `A` is constant with time.
+"""
 @concrete struct ConstantLinearMap <: KinematicTransformation
     linear
 end
