@@ -2,9 +2,9 @@ using KinematicCoordinateTransformations
 
 using LinearAlgebra: ×
 
-import Random
-import StaticArrays
-import Test
+using Random: Random
+using StaticArrays: StaticArrays
+using Test: Test
 
 Test.@testset "KinematicCoordinateTransformations" begin
 
@@ -14,6 +14,6 @@ Test.@testset "KinematicCoordinateTransformations" begin
     include("composed.jl")
     include("steady_rot_y.jl")
     include("steady_rot_z.jl")
-    include("forwarddiff.jl")
+    include("ad.jl")
 
 end
