@@ -24,6 +24,7 @@ KinematicCoordinateTransformations |  388    388  3.8s
 
 Most of the tests compare KinematicCoordinateTransformations.jl's functions against hand-calculated coordinate transformations, and a few trivial cases.
 Also, the `compose` feature (where two or more transformations are combined into one) is compared to performing the equivalent transformation step-by-step.
+Additionally, KinematicCoordinateTransformations.jl's tests use the automatic differentiation library [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl) to check its implementation of velocity, acceleration, and jerk by comparing to the results of differentiating (with respect to time) a position, velocity, or acceleration function (see `tests/forwarddiff.jl`).
 
 
 ## Signed Commits

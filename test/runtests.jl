@@ -14,5 +14,6 @@ Test.@testset "KinematicCoordinateTransformations" begin
     include("composed.jl")
     include("steady_rot_y.jl")
     include("steady_rot_z.jl")
+    include("forwarddiff.jl")
 
 end
