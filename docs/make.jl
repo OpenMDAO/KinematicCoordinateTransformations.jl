@@ -12,7 +12,7 @@ function main()
              pages = ["Reference"=>"index.md", "Software Quality Assurance"=>"sqa.md"])
 
     if IN_CI
-        deploydocs(repo="github.com/dingraha/KinematicCoordinateTransformations.jl.git", devbranch="main")
+        deploydocs(repo="github.com/OpenMDAO/KinematicCoordinateTransformations.jl.git", devbranch="main")
     end
 end
 
