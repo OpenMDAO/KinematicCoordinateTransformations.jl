@@ -1,6 +1,6 @@
 # KinematicCoordinateTransformations.jl
 
-[![Tests](https://github.com/dingraha/KinematicCoordinateTransformations/actions/workflows/test.yaml/badge.svg)](https://github.com/dingraha/KinematicCoordinateTransformations/actions/workflows/test.yaml)
+[![Tests](https://github.com/OpenMDAO/KinematicCoordinateTransformations/actions/workflows/test.yaml/badge.svg)](https://github.com/OpenMDAO/KinematicCoordinateTransformations/actions/workflows/test.yaml)
 
 KinematicCoordinateTransformations.jl is a Julia package for performing chains of coordinate system transformations involving not only position, but also kinematic quantities such as velocity, acceleration, and jerk.
 The transformations currently supported:
