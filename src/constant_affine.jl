@@ -1,3 +1,10 @@
+"""
+    ConstantAffineMap
+
+A `struct` describing a transformation of the form `x_target = A*x_source + b`, and time derivatives of `x_source`, where `A` and `b` are constant in time.
+
+`ConstantAffineMap`s are typically constructed internally from other `KinematicTransformation`s.
+"""
 @concrete struct ConstantAffineMap <: KinematicTransformation
     # x_new = x_Mx*x + x_b
     x_Mx
@@ -122,4 +129,76 @@ function transform!(x_new, trans::ConstantAffineMap, t, x, linear_only::Bool=fal
     end
 
     return nothing
+end
+
+function transform(trans::ConstantAffineMap, t, x, v, a, j, linear_only::Bool=false)
+    # x_new = trans.x_Mx*x                                              .+ trans.x_b
+    # v_new = trans.v_Mx*x + trans.v_Mv*v                               .+ trans.v_b
+    # a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a                .+ trans.a_b
+    # j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j .+ trans.j_b
+
+    x_new = trans.x_Mx*x
+    v_new = trans.v_Mx*x + trans.v_Mv*v
+    a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a
+    j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j
+
+    if ! linear_only
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
+        a_new = a_new .+ trans.a_b
+        j_new = j_new .+ trans.j_b
+    end
+
+    return x_new, v_new, a_new, j_new
+end
+
+function transform(trans::ConstantAffineMap, t, x, v, a, linear_only::Bool=false)
+    # x_new = trans.x_Mx*x                                              .+ trans.x_b
+    # v_new = trans.v_Mx*x + trans.v_Mv*v                               .+ trans.v_b
+    # a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a                .+ trans.a_b
+    # j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j .+ trans.j_b
+
+    x_new = trans.x_Mx*x
+    v_new = trans.v_Mx*x + trans.v_Mv*v
+    a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a
+
+    if ! linear_only
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
+        a_new = a_new .+ trans.a_b
+    end
+
+    return x_new, v_new, a_new
+end
+
+function transform(trans::ConstantAffineMap, t, x, v, linear_only::Bool=false)
+    # x_new = trans.x_Mx*x                                              .+ trans.x_b
+    # v_new = trans.v_Mx*x + trans.v_Mv*v                               .+ trans.v_b
+    # a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a                .+ trans.a_b
+    # j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j .+ trans.j_b
+
+    x_new = trans.x_Mx*x
+    v_new = trans.v_Mx*x + trans.v_Mv*v
+
+    if ! linear_only
+        x_new = x_new .+ trans.x_b
+        v_new = v_new .+ trans.v_b
+    end
+
+    return x_new, v_new
+end
+
+function transform(trans::ConstantAffineMap, t, x, linear_only::Bool=false)
+    # x_new = trans.x_Mx*x                                              .+ trans.x_b
+    # v_new = trans.v_Mx*x + trans.v_Mv*v                               .+ trans.v_b
+    # a_new = trans.a_Mx*x + trans.a_Mv*v + trans.a_Ma*a                .+ trans.a_b
+    # j_new = trans.j_Mx*x + trans.j_Mv*v + trans.j_Ma*a + trans.j_Mj*j .+ trans.j_b
+
+    x_new = trans.x_Mx*x
+
+    if ! linear_only
+        x_new = x_new .+ trans.x_b
+    end
+
+    return x_new
 end

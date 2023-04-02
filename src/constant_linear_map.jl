@@ -1,5 +1,10 @@
 # This is completely stolen from CoordinateTransformations.jl. Every vector will
 # be transformed the same way, I guess, so I only need one matrix.
+"""
+    ConstantLinearMap(A)
+
+Construct a reference frame transformation of the form `x_target = A*x_source`, where `A` is constant with time.
+"""
 @concrete struct ConstantLinearMap <: KinematicTransformation
     linear
 end
@@ -52,6 +57,36 @@ function transform!(x_new, trans::ConstantLinearMap, t, x, linear_only::Bool=fal
     mul!(x_new, trans.linear, x)
 
     return nothing
+end
+
+function transform(trans::ConstantLinearMap, t, x, v, a, j, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+    a_new = trans.linear*a
+    j_new = trans.linear*j
+
+    return x_new, v_new, a_new, j_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, v, a, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+    a_new = trans.linear*a
+
+    return x_new, v_new, a_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, v, linear_only::Bool=false)
+    x_new = trans.linear*x
+    v_new = trans.linear*v
+
+    return x_new, v_new
+end
+
+function transform(trans::ConstantLinearMap, t, x, linear_only::Bool=false)
+    x_new = trans.linear*x
+
+    return x_new
 end
 
 function ConstantAffineMap(t, trans::ConstantLinearMap)

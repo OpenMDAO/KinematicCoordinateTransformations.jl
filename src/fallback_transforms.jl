@@ -1,40 +1,64 @@
 function (trans::KinematicTransformation)(t, x, v, a, j, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-    j_new = similar(j)
-
-    transform!(x_new, v_new, a_new, j_new, trans, t, x, v, a, j, linear_only)
-
-    return x_new, v_new, a_new, j_new
+    return transform(trans, t, x, v, a, j, linear_only)
 end
 
 function (trans::KinematicTransformation)(t, x, v, a, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-    a_new = similar(a)
-
-    transform!(x_new, v_new, a_new, trans, t, x, v, a, linear_only)
-
-    return x_new, v_new, a_new
+    return transform(trans, t, x, v, a, linear_only)
 end
 
 function (trans::KinematicTransformation)(t, x, v, linear_only::Bool=false)
-    x_new = similar(x)
-    v_new = similar(v)
-
-    transform!(x_new, v_new, trans, t, x, v, linear_only)
-
-    return x_new, v_new
+    return transform(trans, t, x, v, linear_only)
 end
 
 function (trans::KinematicTransformation)(t, x, linear_only::Bool=false)
-    x_new = similar(x)
-
-    transform!(x_new, trans, t, x, linear_only)
-
-    return x_new
+    return transform(trans, t, x, linear_only)
 end
+
+"""
+    transform(trans::KinematicTransformation, t, x, [v, [a, [j]]], linear_only::Bool=false)
+
+Transform vector `x`, and optionally `v`, `a`, and `j` from the source coordinate system to the target coordinate system at time `t` according to the transformation `trans`, returning `x` and optionally `v`, `a`, and `j` in the target coordinate system.
+
+`v`, `a`, and `j` are the first through third time derivatives of `x`.
+
+If `linear_only` is `true`, the constant part (if any) of the transformation will not be applied.
+For example, with a `ConstantAffineMap`, which represents a transformation of the form `x_target = A*x_source + b`, the `b` will not be used.
+This is useful for properly transforming vectors that don't represent the position of a point and time derivatives of the same (e.g. force).
+"""
+transform
+
+function transform(trans::KinematicTransformation, t, x, v, a, j, linear_only::Bool=false)
+    affine = ConstantAffineMap(t, trans)
+    return transform(affine, t, x, v, a, j, linear_only)
+end
+
+function transform(trans::KinematicTransformation, t, x, v, a, linear_only::Bool=false)
+    affine = ConstantAffineMap(t, trans)
+    return transform(affine, t, x, v, a, linear_only)
+end
+
+function transform(trans::KinematicTransformation, t, x, v, linear_only::Bool=false)
+    affine = ConstantAffineMap(t, trans)
+    return transform(affine, t, x, v, linear_only)
+end
+
+function transform(trans::KinematicTransformation, t, x, linear_only::Bool=false)
+    affine = ConstantAffineMap(t, trans)
+    return transform(affine, t, x, linear_only)
+end
+
+"""
+    transform!(x_new, [v_new, [a_new, [j_new]]], trans::KinematicTransformation, t, x, [v, [a, [j]]], linear_only::Bool=false)
+
+Transform vector `x`, and optionally `v`, `a`, and `j` from the source coordinate system to the target coordinate system at time `t` according to the transformation `trans`, returning the results in `x_new` and optionally `v_new`, `a_new`, and `j_new` in the target coordinate system.
+
+`v`, `a`, and `j` are the first through third time derivatives of `x`.
+
+If `linear_only` is `true`, the constant part (if any) of the transformation will not be applied.
+For example, with a `ConstantAffineMap`, which represents a transformation of the form `x_target = A*x_source + b`, the `b` will not be used.
+This is useful for properly transforming vectors that don't represent the position of a point and time derivatives of the same (e.g. force).
+"""
+transform!
 
 function transform!(x_new, v_new, a_new, j_new, trans::KinematicTransformation, t, x, v, a, j, linear_only::Bool=false)
     # x_new = R*x

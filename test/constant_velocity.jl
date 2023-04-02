@@ -6,10 +6,10 @@ Test.@testset "Constant velocity transformation" begin
         vel = StaticArrays.SVector(0.0, 0.0, 0.0)
         trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
-        x = [3.0, 4.0, 5.0]
-        v = [8.0, 2.0, 2.0]
-        a = [2.0, 3.0, 4.0]
-        j = [1.0, 2.0, 3.0]
+        x = StaticArrays.@SVector [3.0, 4.0, 5.0]
+        v = StaticArrays.@SVector [8.0, 2.0, 2.0]
+        a = StaticArrays.@SVector [2.0, 3.0, 4.0]
+        j = StaticArrays.@SVector [1.0, 2.0, 3.0]
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x
@@ -30,10 +30,10 @@ Test.@testset "Constant velocity transformation" begin
         vel = StaticArrays.SVector(2.0, 3.0, 4.0)
         trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
-        x = [3.0, 4.0, 5.0]
-        v = [8.0, 2.0, 2.0]
-        a = [2.0, 3.0, 4.0]
-        j = [1.0, 2.0, 3.0]
+        x = StaticArrays.@SVector [3.0, 4.0, 5.0]
+        v = StaticArrays.@SVector [8.0, 2.0, 2.0]
+        a = StaticArrays.@SVector [2.0, 3.0, 4.0]
+        j = StaticArrays.@SVector [1.0, 2.0, 3.0]
         Test.@inferred trans(t, x, v, a, j)
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)
         Test.@test x_new ≈ x + (t - t0)*vel
@@ -54,10 +54,10 @@ Test.@testset "Constant velocity transformation" begin
         vel = StaticArrays.SVector(2.0, 3.0, 4.0)
         trans = ConstantVelocityTransformation(t0, x0, vel)
         t = 8.0
-        x = [3.0, 4.0, 5.0]
-        v = [8.0, 2.0, 2.0]
-        a = [2.0, 3.0, 4.0]
-        j = [1.0, 2.0, 3.0]
+        x = StaticArrays.@SVector [3.0, 4.0, 5.0]
+        v = StaticArrays.@SVector [8.0, 2.0, 2.0]
+        a = StaticArrays.@SVector [2.0, 3.0, 4.0]
+        j = StaticArrays.@SVector [1.0, 2.0, 3.0]
         Test.@inferred trans(t, x, v, a, j)
 
         x_new, v_new, a_new, j_new = trans(t, x, v, a, j)

@@ -1,3 +1,13 @@
+"""
+    compose(t, trans1::KinematicTransformation, trans2::KinematicTransformation)
+
+Return a transformation resulting from applying `trans2` and then `trans1` at time `t`.
+
+This will likely return a `ConstantAffineMap`, but may return a more specific transformation.
+For example, combining two `ConstantLinearMap`s will result in a new `ConstantLinearMap`.
+"""
+compose
+
 function compose(t, trans1::ConstantVelocityTransformation, trans2::ConstantVelocityTransformation)
     v = trans1.v + trans2.v
     # So, t0 is the time when the source frame is at x0 from the target frame.

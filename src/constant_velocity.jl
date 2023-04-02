@@ -1,3 +1,15 @@
+"""
+    ConstantVelocityTransformation(t0, x0, v)
+
+Construct a transformation of a reference frame moving with a constant velocity, i.e., `x_target = x_source + x0 .+ (t - t0)*v`.
+
+# Arguments
+* `t0`: Time at which the position of the source coordinate system's origin in the target coordinate system is equal to `x0`. 
+* `x0`: Position of the source coordinate system's origin in the target coordinate system's frame of reference at time `t0`. 
+* `v`: (Constant) velocity of the source coordinate system relative to the target coordinate system.
+"""
+ConstantVelocityTransformation
+
 @concrete struct ConstantVelocityTransformation <: KinematicTransformation
     # Time at which the position of the source coordinate system's origin in the target coordinate system is equal to x0.
     t0
@@ -46,6 +58,84 @@ function transform!(x_new, trans::ConstantVelocityTransformation, t, x, linear_o
     if ! linear_only
         x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
     end
+    return x_new
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, v, a, j, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
+    end
+
+    return x_new, v_new, a, j
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, v, a, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
+    end
+
+    return x_new, v_new, a
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, v, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+        v_new = v
+    else
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+        v_new = v .+ trans.v
+    end
+
+    return x_new, v_new
+end
+
+function transform(trans::ConstantVelocityTransformation, t, x, linear_only::Bool=false)
+    # x_new .= x
+    # v_new .= v
+    # a_new .= a
+    # j_new .= j
+    # if ! linear_only
+    #     x_new .+= trans.x0 .+ (t - trans.t0)*trans.v
+    #     v_new .+= trans.v
+    # end
+    if linear_only
+        x_new = x
+    else
+        x_new = x .+ trans.x0 .+ (t - trans.t0)*trans.v
+    end
+
     return x_new
 end
 

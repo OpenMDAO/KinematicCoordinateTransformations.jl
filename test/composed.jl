@@ -6,10 +6,10 @@ Test.@testset "Composed" begin
 
         t = 5.0
         t3 = compose(t, trans1, trans2)
-        x = [3.0, 4.0, 5.0]
-        v = [4.0, 5.0, 6.0]
-        a = [2.0, 3.0, 4.0]
-        j = [1.0, 2.0, 3.0]
+        x = StaticArrays.@SVector [3.0, 4.0, 5.0]
+        v = StaticArrays.@SVector [4.0, 5.0, 6.0]
+        a = StaticArrays.@SVector [2.0, 3.0, 4.0]
+        j = StaticArrays.@SVector [1.0, 2.0, 3.0]
 
         Test.@inferred trans1(t, trans2(t, x, v, a, j)...)
         Test.@inferred t3(t, x, v, a, j)
@@ -171,9 +171,9 @@ Test.@testset "Composed" begin
 
     Test.@testset "Constant velocity and constant linear map" begin
         trans1 = ConstantVelocityTransformation(1.0, StaticArrays.SVector(1.0, 2.0, 3.0), StaticArrays.SVector(2.0, 3.0, 4.0))
-        M2 = [8.0 1.0 3.0;
-              3.0 6.0 9.0;
-              4.0 7.0 10.0]
+        M2 = StaticArrays.@SMatrix [8.0 1.0 3.0;
+                                    3.0 6.0 9.0;
+                                    4.0 7.0 10.0]
         trans2 = ConstantLinearMap(M2)
 
         t = 5.0
@@ -282,9 +282,9 @@ Test.@testset "Composed" begin
         θ = 5.0*pi/180.0
         trans1 = SteadyRotXTransformation(t0, ω, θ)
 
-        M2 = [8.0 1.0 3.0;
-              3.0 6.0 9.0;
-              4.0 7.0 10.0]
+        M2 = StaticArrays.@SMatrix [8.0 1.0 3.0;
+                                    3.0 6.0 9.0;
+                                    4.0 7.0 10.0]
         trans2 = ConstantLinearMap(M2)
 
         t = 5.0
