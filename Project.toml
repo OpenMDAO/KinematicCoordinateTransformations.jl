@@ -1,7 +1,7 @@
 name = "KinematicCoordinateTransformations"
 uuid = "730d3219-0a85-48f9-b699-9f31f8913d09"
 authors = ["Ingraham, Daniel James (GRC-LTV0) <daniel.j.ingraham@nasa.gov>"]
-version = "0.4.2"
+version = "0.4.3"
 
 [deps]
 ConcreteStructs = "2569d6c7-a4a2-43d3-a901-331e8e4be471"
@@ -9,16 +9,6 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+julia = "1.8.2"
 ConcreteStructs = "0.2.3"
 StaticArrays = "1.5.12"
-julia = "1.8.2"
-
-[extras]
-FiniteDiff = "6a86dc24-6348-571c-b903-95158fe2bd41"
-ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Random", "Test", "ForwardDiff", "FiniteDiff", "ReverseDiff"]
