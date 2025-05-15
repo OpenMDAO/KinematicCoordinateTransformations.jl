@@ -128,9 +128,13 @@ function compose(t, trans1::ConstantAffineMap, trans2::ConstantAffineMap)
 end
 
 # Fallback compose.
-function compose(t, trans1, trans2)
+function compose(t, trans1::KinematicTransformation, trans2::KinematicTransformation)
     cam1 = ConstantAffineMap(t, trans1)
     cam2 = ConstantAffineMap(t, trans2)
     return compose(t, cam1, cam2)
 end
 
+function compose(t, trans1::KinematicTransformation, trans_rest...)
+    trans_new = compose(t, trans_rest[end-1], trans_rest[end])
+    return compose(t, trans1, trans_rest[begin:end-2]..., trans_new)
+end

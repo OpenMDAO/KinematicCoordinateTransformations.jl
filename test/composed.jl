@@ -333,4 +333,30 @@ Test.@testset "Composed" begin
         Test.@test j3 ≈ j21
     end
 
+    Test.@testset "multiple composes" begin
+        t = 8.0
+        trans1 = SteadyRotXTransformation(2.0, 2.0*pi, 5.0*pi/180.0)
+        trans2 = ConstantLinearMap(StaticArrays.@SMatrix([8.0 1.0 3.0;
+                                                          3.0 6.0 9.0;
+                                                          4.0 7.0 10.0]))
+        trans3 = SteadyRotYTransformation(3.0, 1.5*pi, 2.0*pi/180.0)
+        trans4 = SteadyRotZTransformation(4.0, 1.6*pi, 3.0*pi/180.0)
+        trans5 = ConstantVelocityTransformation(2.0, StaticArrays.@SVector([2.0, 3.0, 4.0]), StaticArrays.@SVector([3.0, 4.0, 5.0]))
+
+        x = [3.0, 4.0, 5.0]
+        v = [4.0, 5.0, 6.0]
+        a = [2.0, 3.0, 4.0]
+        j = [1.5, 2.0, 3.0]
+
+        x1, v1, a1, j1 = trans1(t, trans2(t, trans3(t, trans4(t, trans5(t, x, v, a, j)...)...)...)...)
+        trans_all = compose(t, trans1, trans2, trans3, trans4, trans5)
+        x2, v2, a2, j2 = transform(trans_all, t, x, v, a, j)
+
+        Test.@test x2 ≈ x1
+        Test.@test v2 ≈ v1
+        Test.@test a2 ≈ a1
+        Test.@test j2 ≈ j1
+
+    end
+
 end
